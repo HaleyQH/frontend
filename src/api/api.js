@@ -1,21 +1,33 @@
 import requiest from '../utils/requiest'
 
 
-export const getAll = () => {
+export const getData = (param) => {
   return requiest(
     {
-      url: "/",
-      method: 'get'
+      url: "/query",
+      method: 'get',
+      params: param
     }
   )
 }
 
-export const save = (param) => {
+export const getAjaxData = (params) => {
+  return requiest(
+    {
+      url:"/hint",
+      method: 'get',
+      params: params
+    }
+  )
+}
+
+export const save = (headers, param) => {
   return requiest(
     {
       url: '/',
       method: 'post',
-      data:param
+      headers: headers,
+      data: param
     }
   )
 }

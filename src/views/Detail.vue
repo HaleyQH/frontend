@@ -1,144 +1,80 @@
 <template>
-  <!--登录表单的容器-->
-  <div class="login_container">
-    <!--  登陆区域-->
-    <div class="login_box">
-      <div class="avatar_box">
-        <!-- 头像-->
-        <img src="../assets/img/1.gif">
-      </div>
-
-      <el-form ref="loginForm" :rules="loginRules" :model="loginForm" class="login_form" label-width="0px">
-        <el-form-item prop="username">
-          <el-input v-model="loginForm.username" prefix-icon="el-icon-user"></el-input>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input v-model="loginForm.password" prefix-icon="el-icon-lock"></el-input>
-        </el-form-item>
-
-        <el-form-item prop="verifyCode">
-          <div class="verifyCode_box">
-            <el-input v-model="loginForm.verifyCode" placeholder="请输入手机验证码" prefix-icon="el-icon-mobile"
-                      class="verifyCode"></el-input>
-            <img src="../assets/img/images.gif" alt="" class="verifyCode_img">
+  <div>
+    <el-container>
+      <el-header>
+        <div>
+        </div>
+      </el-header>
+      <el-container>
+        <el-aside width="60%">
+          <div class="video">
+            <video width="640" height="480" controls autoplay>
+              <source :src="video" type="video/mp4">
+            </video>
           </div>
-        </el-form-item>
+          <div class="btn">
+            <el-button type="primary" button @click="back" icon="el-icon-reading">pdf</el-button>
+            <el-button type="primary" button @click="back" icon="el-icon-s-data">数据集</el-button>
+            <el-button type="primary" button @click="back" icon="el-icon-s-release">代码</el-button>
+          </div>
+        </el-aside>
+        <el-main>
+          <div>
+            数据库中的数据表之间的关系包括一对一，一对多，多对多，它们分别使用关键字OneToOneField,ForeignKey,ManyToManyFiled进行定义，之前已经写了一对多，多对多介绍以及使用，准备再找一个时间写一下它们之间的一个区别，这三种关系中比较让你不好理解的可能就是一对一和一对多的区别了，暂时按下不表
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
 
 
-        <el-form-item class="login_btn">
-          <el-button type="primary" @click="submitForm('loginForm')">立即创建</el-button>
-          <el-button @click="resetForm('loginForm')">取消</el-button>
-        </el-form-item>
-      </el-form>
+    <div>
 
     </div>
-    <!--  表单-->
+
+
   </div>
 </template>
 
 <script>
-import axios from 'axios'
+import {getVideo} from "@/api/api";
 
 export default {
-  name: "Login",
   data() {
     return {
-      baseURL:'http://127.0.0.1:8090/polls/',
-      loginForm: {
-        username: '',
-        password: '',
-        verifyCode: ''
-      }, loginRules: {
-        username: [
-          {required: true, message: '请输入用户名称', trigger: 'blur'},
-          {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
-        ], password: [
-          {required: true, message: '请输入登录密码', trigger: 'blur'},
-          {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
-        ], verifyCode: [
-          {required: true, message: '请输入验证码', trigger: 'blur'},
-
-        ]
-      }
-
+      video:[]
     }
+  }, created() {
+    let params = this.$route.params
+    if (params.video !== undefined)
+      this.video = params.video
+    // this.Display(params)
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-
-
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
+    async Display(params) {
+      getVideo(params)
+        .then(res => {
+          this.video = res.data
+        });
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+    back() {
+      this.$router.push({name: 'Search'})
     }
   }
 }
 </script>
 
-<style scoped lang="less">
-.login_container {
-  height: 100%;
-  background-color: aqua;
+<style lang="less" scoped>
+.video {
+  text-align: center;
+
 }
 
-.login_box {
-  width: 450px;
-  height: 380px;
-  background-color: azure;
-  border-radius: 3px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  //这里的left和top指的是左上角的点离上和左50%，此时加transform让点居中
-  transform: translate(-50%, -50%);
+.btn {
+  text-align: center;
 
-  .avatar_box {
-    width: 130px;
-    height: 130px;
-    border: 1px solid #2c3e50;
-    border-radius: 50%;
-    margin: -65px auto;
-    background-color: azure;
-
-    img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-    }
-  }
-}
-
-.login_form {
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-  padding: 0px 20px;
-  box-sizing: border-box;
-
-  .login_btn {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .verifyCode_box {
-    display: flex;
-
-    .verifyCode {
-      width: 70%;
-      justify-content: left;
-    }
-
-    .verifyCode_img {
-      width: 30%;
-      justify-content: flex-end;
-    }
+  button {
+    width: 15%;
+    margin: 0 10px;
   }
 }
 </style>

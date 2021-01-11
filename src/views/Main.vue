@@ -1,68 +1,80 @@
 <template>
-  <div class="row">
-    <!-- 左右两屏 -->
-    <div class="col-md-4">
-      <!-- 左边是编辑部分 -->
-      <div class="form-group">
-        <input type="text" v-model="title" class="form-control" placeholder="标题">
-      </div>
-      <div class="form-group">
-        <textarea class="form-control" v-model="content" placeholder="内容"></textarea>
-      </div>
-      <div class="form-group">
-        <button class='btn btn-block btn-success' @click="save()">保存</button>
-      </div>
+  <div :style="style">
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="ruleForm" :inline="true">
+      <el-form-item prop="theme">
+        <el-select v-model="ruleForm.theme" placeholder="主题">
+          <el-option label="作者" value="author"></el-option>
+          <el-option label="标题" value="title"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="query">
+        <el-input v-model="ruleForm.query" class="input"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm('ruleForm')">搜索</el-button>
+      </el-form-item>
+    </el-form>
 
-    </div>
-    <div class="col-md-8">
-      <!-- 右边是博客内容表格部分 -->
-      <table class="table table-bordered table-hover">
-        <thead>
-        <th class="text-center">标题</th>
-        <th class="text-center">内容</th>
-        <th class="text-center">编辑</th>
-        <th class="text-center">删除</th>
-        </thead>
-
-      </table>
-    </div>
   </div>
 </template>
 
 <script>
-import {getAll, save} from "@/api/api";
+import {getData} from "@/api/api";
 
 export default {
   name: 'Main',
-  props: {},
   data() {
     return {
-      title: '',
-      content: ''
+      style: {
+        width: '100%',
+        height: '100%',
+        backgroundImage: 'url(' + require('../assets/img/background.jpg') + ')',
+        backgroundSize: '100% 100%'
+      },
+      ruleForm: {
+        theme: '',
+        query: '',
+      },
+      rules: {
+        query: [
+          {required: true, message: '请输入活动名称', trigger: 'blur'},
+          {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+        ],
+      },
     }
   },
   methods: {
-    getAll() {
-      getAll()
+    async Display(params) {
+      getData(params)
         .then(res => {
-          this.title = ''
-          this.content = ''
+          this.tableData = res.data
         });
-    },
-    save() {
-      save({title: this.title, content: this.content})
-        .then(() => {
-          this.getAll();
-        })
-
+    }, submitForm() {
+      // this.$refs[ruleForm].validate((valid) => {
+      //   if (valid) {
+      let formData = JSON.stringify(this.ruleForm)
+      formData = JSON.parse(formData)
+      for (let key in this.ruleForm) {
+        this.ruleForm[key] = ''
+      }
+      this.$router.push({name: "Search", params: formData});
+      // } else {
+      //   console.log('error submit!!');
+      //   return false;
     }
-  },
-  mounted() {
-    this.getAll();g
+    // });
+  }, beforeRouteLeave(to, from, next) {
+    to.meta.keepAlive = false;
+    next();
   }
 }
 </script>
 
 <style scoped>
+.ruleForm {
+  position: absolute;
+  top: 50%;
+  left: 30%;
+}
 
 </style>

@@ -5,23 +5,9 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'Home',
-  //   component: Home
-  // },
-  // {
-  //   path: '/about',
-  //   name: 'About',
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  // },
   {
     path: '/',
-    redirect: '/main',
-
+    redirect: '/demo2',
   },
   {
     path: '/detail',
@@ -29,7 +15,10 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "login" */ '../views/Detail.vue')
+    component: () => import(/* webpackChunkName: "login" */ '../views/Detail.vue'),
+    meta: {
+      keepAlive: true, //此组件需要被缓存
+    }
   },
   {
     path: '/main',
@@ -37,7 +26,7 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "login" */ '../views/Main.vue')
+    component: () => import(/* webpackChunkName: "login" */ '../views/Main.vue'),
   },
   {
     path: '/search',
@@ -45,7 +34,25 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "login" */ '../views/Search.vue')
+    component: () => import(/* webpackChunkName: "login" */ '../views/Search.vue'),
+    meta: {
+      keepAlive: true, //此组件需要被缓存
+    }
+  },
+  {
+    path: '/test',
+    name: 'Test',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "login" */ '../views/test.vue'),
+  }, {
+    path: '/demo2',
+    name: 'Demo2',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "login" */ '../views/demo2.vue')
   },
 ]
 
