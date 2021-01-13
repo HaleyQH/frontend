@@ -62,19 +62,19 @@ export default {
       rules: {
         video: [
           {required: true, message: '请输入活动名称', trigger: 'blur'},
-          {min: 3, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+          {min: 3,  message: '长度在 3 到 5 个字符', trigger: 'blur'}
         ],
         title: [
           {required: true, message: '请输入活动名称', trigger: 'blur'},
-          {min: 3, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+          {min: 3,  message: '长度在 3 到 5 个字符', trigger: 'blur'}
         ],
         author: [
           {required: true, message: '请输入活动名称', trigger: 'blur'},
-          {min: 3, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+          {min: 3,  message: '长度在 3 到 5 个字符', trigger: 'blur'}
         ],
         content: [
           {required: true, message: '请输入活动名称', trigger: 'blur'},
-          {min: 3, max: 50, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+          {min: 3,  message: '长度在 3 到 5 个字符', trigger: 'blur'}
         ],
       },
     }

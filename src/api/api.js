@@ -10,16 +10,16 @@ export const getData = (param) => {
     }
   )
 }
-
-export const getAjaxData = (params) => {
+export const getAjaxData = (param) => {
   return requiest(
     {
-      url:"/hint",
+      url: "/hint",
       method: 'get',
-      params: params
+      params: param
     }
   )
 }
+
 
 export const save = (headers, param) => {
   return requiest(

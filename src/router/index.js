@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/demo2',
+    redirect: '/main',
   },
   {
     path: '/detail',
@@ -17,7 +17,7 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "login" */ '../views/Detail.vue'),
     meta: {
-      keepAlive: true, //此组件需要被缓存
+     /* keepAlive: true, //此组件需要被缓存*/
     }
   },
   {
@@ -46,13 +46,6 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "login" */ '../views/test.vue'),
-  }, {
-    path: '/demo2',
-    name: 'Demo2',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "login" */ '../views/demo2.vue')
   },
 ]
 
