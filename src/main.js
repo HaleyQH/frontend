@@ -1,12 +1,14 @@
 import 'element-ui/lib/theme-chalk/index.css';
+import axios from 'axios'
 
+Vue.prototype.$http = axios
 import './assets/css/global.css'
-
+import Vue from "vue";
 Vue.config.productionTip = false
 
 import router from './router'
 import store from './store'
-import Vue from 'vue';
+// import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue';

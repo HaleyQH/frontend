@@ -11,16 +11,11 @@
         </el-row>
       </div>
     </el-row>
-    <!--    <el-row>
-          <el-col :span="1">
-            <el-button icon="el-icon-back" @click="back" plain>返回</el-button>
-          </el-col>
-        </el-row>-->
     <div class="Search">
       <div class="bannerSelectInput">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="ruleForm" :inline="true">
           <el-form-item prop="theme">
-            <el-select v-model="ruleForm.theme" placeholder="主题">
+            <el-select v-model="ruleForm.theme" multiple placeholder="主题">
               <el-option label="作者" value="author"><span style="float: left">作者</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">Author</span></el-option>
               <el-option label="标题" value="title"><span style="float: left">标题</span>
@@ -30,16 +25,21 @@
             </el-select>
           </el-form-item>
           <el-form-item prop="query">
-            <el-input v-model="ruleForm.query" class="input"></el-input>
+            <el-autocomplete
+              id="search"
+              v-model="ruleForm.query"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="请输入内容"
+              @select="handleSelect"
+            ></el-autocomplete>
           </el-form-item>
           <el-form-item>
             <el-button class="bor" type="primary" icon="el-icon-search" @click="submitForm('ruleForm')">搜索</el-button>
           </el-form-item>
-          <el-button icon="el-icon-back" @click="back" plain>返回</el-button>
         </el-form>
       </div>
       <div class="page">
-        <el-table :data="tableData.slice((currentPage-1)*PageSize,currentPage*PageSize)" @row-click="openDetail"
+        <el-table :data="(tableData||'').slice((currentPage-1)*PageSize,currentPage*PageSize)" @row-click="openDetail"
                   size="medium"
                   v-loading="loading"
                   style="width: 100%;border:1px solid #DEE1E7;padding-left:1px"
@@ -47,7 +47,7 @@
                   element-loading-text="$t('action.loading')"
         >
           <el-table-column header-align="center" align="center"
-                           prop="title"
+                           prop="tittle"
                            label="标题"
                            width="250">
           </el-table-column>
@@ -65,6 +65,7 @@
                            label="出版社">
           </el-table-column>
           <el-table-column header-align="center" align="center"
+                           :show-overflow-tooltip="true"
                            prop="abstract"
                            label="摘要">
           </el-table-column>
@@ -77,8 +78,6 @@
                          :total=totalCount
                          :current-page="currentPage"
                          @current-change="handleCurrentChange">
-            <!--                       @size-change="handleSizeChange"-->
-            <!--        >-->
           </el-pagination>
         </div>
       </div>
@@ -89,20 +88,22 @@
 </template>
 
 <script>
-import {getData} from "@/api/api";
+import {getAjaxData, getData} from "@/api/api";
 import BottomIndex from '@/components/BottomIndex'
+import {mapMutations} from 'vuex'
 
 export default {
   name: 'Search',
   data() {
     return {
+      params: '',
       logoBackground: require('../assets/Main_img/indexBanner.jpg'),
       tableData: [],
       ruleForm: {
         theme: [],
-        query: ''
+        query: '',
       },
-      PageSize: 7,
+      PageSize: 10,
       //总条数
       totalCount: 100,
       //当前页码
@@ -115,8 +116,7 @@ export default {
             trigger: 'blur'
           },
           {
-            min: 2,
-            max: 30,
+            min: 0,
             message: '不能是空的哦，输入你要查询的内容吧',
             trigger: 'blur'
           }
@@ -125,40 +125,61 @@ export default {
     }
   },
   activated() {
-    let params = this.$route.params
-    if (params.query !== undefined) {
+    this.params = this.$route.params
+    if (this.params.query !== undefined) {
       this.handleCurrentChange(1)
-      this.Display(params)
+      this.Display(this.params)
+    } else {
+      this.handleCurrentChange(this.$store.getters.myCurrentPage)
+      this.tableData = this.$store.getters.myTableData
+      this.totalCount = this.$store.getters.myTotal
     }
   },
   methods: {
-    async Display(params) {
+    ...mapMutations(["saveTableData"]),
+    ...mapMutations(["saveTotal"]),
+    ...mapMutations(["saveCurrentPage"]),
+    Display(params) {
       getData(params)
         .then(res => {
           this.tableData = res.data.data
           this.totalCount = res.data.total
-          console.log(this.totalCount)
-          console.log(this.tableData)
+          this.saveTableData(this.tableData)
+          this.saveTotal(this.totalCount)
+          this.saveCurrentPage(this.currentPage)
         });
     },
     submitForm(ruleForm) {
       this.$refs[ruleForm].validate((valid) => {
         if (valid) {
+          this.params = this.ruleForm
+          this.Display(this.params)
+          this.handleCurrentChange(1)
           for (let key in this.ruleForm) {
             this.ruleForm[key] = ''
           }
-          this.handleCurrentChange(1)
-          this.Display(this.ruleForm)
         } else {
           console.log('error submit!!')
           return false;
         }
       });
+    }, querySearchAsync(ruleForm, cb) {
+      getAjaxData(this.ruleForm)
+        .then(res => {
+          this.result = res.data
+        });
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(this.result);                                     //cb()会将json对象的第一个属性拼接到下拉列表中
+      }, 3000 * Math.random());
+    }, handleSelect(item) {
+      console.log(item);
     },
     openDetail(row) {
       if (row) {
         this.$router.push({
-          name: 'Detail',
+          name: 'test',
           params: {
             video: row.video,
             title: row.title,
@@ -173,14 +194,11 @@ export default {
         })
       }
     },
-    // handleSizeChange(val) {
-    //   console.log(`每页 ${val} 条`);
-    //   this.currentPage = 1;
-    //   this.PageSize = val;
-    // },
     handleCurrentChange(val) {
       // 改变默认的页数
       this.currentPage = val
+      this.params.page = this.currentPage
+      this.Display(this.params)
     },
     back() {
       this.$router.push({name: 'Main'})
@@ -255,7 +273,7 @@ export default {
   border: 1px solid rgb(218, 218, 218);
   border-radius: 5px;
   position: relative;
-  top: 84%;
+  top: 0%;
   left: 25%;
   z-index: 3;
   /* banner上面的input */
@@ -276,10 +294,6 @@ export default {
   font-size: large;
   font-family: 宋体;
   font-weight: bolder;
-}
-
-.el-input {
-  width: 390px;
 }
 
 </style>

@@ -11,60 +11,85 @@
         </el-row>
       </div>
     </el-row>
-    <div class="Detail">
-      <el-container>
-        <el-header>
-          <div>
+    <el-container class="Detail">
+      <!--      <div class="Detail">-->
+      <el-aside width="640px">
+        <div class="video">
+          <video width="640" height="480" controls autoplay>
+            <source :src="video" type="video/mp4">
+          </video>
+          <div class="videotime">
+            输入的关键字位于视频：{{ keyword_in_video_time }}
+          </div>
+        </div>
+      </el-aside>
+      <el-main>
+        <el-container class="maininfo">
+          <el-header>
             <el-row>
-              <el-col :span="1">
-                <el-button icon="el-icon-back" @click="back" plain>返回</el-button>
-              </el-col>
-              <el-col :span="6">
+              <el-col :span="8">
                 <h2 class="titlehot">{{ title }}
                 </h2>
               </el-col>
+              <el-col :offset="14" :span="2">
+                <el-button icon="el-icon-back" @click="back" plain>返回</el-button>
+              </el-col>
             </el-row>
-          </div>
-        </el-header>
-        <el-container>
-          <el-aside width="60%">
-            <el-main>
-              <div class="article">
-                {{ content }}
+          </el-header>
+          <el-main>
+            <h5>
+              {{ author }}
+            </h5>
+            <div class="article">
+              <div>
+                摘要：{{ abstract }}
               </div>
-            </el-main>
-            <!--          <div class="btn">
-                        <el-button type="primary" button @click="back" icon="el-icon-reading">pdf</el-button>
-                        <el-button type="primary" button @click="back" icon="el-icon-s-data">数据集</el-button>
-                        <el-button type="primary" button @click="back" icon="el-icon-s-release">代码</el-button>
-                      </div>-->
-          </el-aside>
-          <div class="video">
-            <video width="640" height="480" controls autoplay>
-              <source :src="video" type="video/mp4">
-            </video>
-          </div>
+              <br><br>
+              <div>
+                出版社：{{ publisher }}
+              </div>
+              <br>
+              <div>
+                出版年份：{{ publish_at }}
+              </div>
+            </div>
+            <div class="indexbox">
+              <div class="boxFour">
+                <el-row :gutter="10" justify="center">
+                  <el-col :span="8">
+                    <a :href="this.pdf" target="_blank" style="color: white">
+                      <i class="el-icon-document"></i>
+                      <h3>论文原文</h3>
+                      <h5>PDF</h5>
+                    </a>
+                  </el-col>
+                  <el-col :span="8">
+                    <a :href="this.dataset_url" target="_blank" style="color: white">
+                      <i class="el-icon-document"></i>
+                      <h3>数据集</h3>
+                      <h5>Dataset</h5>
+                    </a>
+                  </el-col>
+                  <el-col :span="8">
+                    <a :href="this.pdf" target="_blank" style="color: white">
+                      <i class="el-icon-document"></i>
+                      <h3>源代码</h3>
+                      <h5>Code</h5>
+                    </a>
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
+          </el-main>
         </el-container>
-      </el-container>
-      <div class="indexbox">
-        <el-row :gutter="10" justify="center">
-          <el-col :span="4" class="boxFour" v-for="itemcol6 in vforitem" :key="itemcol6.icon">
-            <a href="http://www.baidu.com" target="_blank" style="color: white">
-              <i :class="itemcol6.icon"></i>
-              <h3>{{ itemcol6.name }}</h3>
-              <h5>{{ itemcol6.english }}</h5>
-              <p class="look">立即查看</p>
-            </a>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
+      </el-main>
+    </el-container>
     <bottominfo></bottominfo>
   </div>
 </template>
 
 <script>
-import {Bottominfo} from '../components/Bottominfo'
+import Bottominfo from '@/components/Bottominfo'
 
 export default {
   data() {
@@ -75,7 +100,7 @@ export default {
         name: "论文原文",
         english: "PDF",
         icon: "el-icon-document",
-        url: []
+        url: "https://www.csdn.net/"
       },
         {
           name: "数据集",
@@ -94,18 +119,20 @@ export default {
   }, created() {
     let params = this.$route.params
     if (params.video !== undefined) {
-      this.video = params.video
-      this.title = params.title
-      this.dataset_url = params.dataset_url
-      this.abstract = params.abstract
-      this.keyword_in_video_time = params.keyword_in_video_time
-      this.pdf = params.pdf
-      this.publisher = params.publisher
-      this.publish_at = params.publish_at
-      this.author = params.author
+      this.$store.commit('saveDetail', params)
+    } else {
+      params = this.$store.getters.myDetail
     }
-  },
-  components: {
+    this.video = params.video
+    this.title = params.tittle
+    this.dataset_url = params.dataset_url
+    this.abstract = params.abstract
+    this.keyword_in_video_time = params.keyword_in_video_time
+    this.pdf = params.pdf
+    this.publisher = params.publisher
+    this.publish_at = params.publish_at
+    this.author = params.author
+  }, components: {
     Bottominfo
   },
   methods: {
@@ -114,7 +141,8 @@ export default {
         .then(res => {
           this.video = res.data
         });
-    }, back() {
+    },
+    back() {
       this.$router.push({name: 'Search'})
     }
   },
@@ -192,6 +220,8 @@ export default {
 
 .indexbox {
   test-align: center;
+  padding-top: 180px;
+  padding-bottom: 0px;
 }
 
 .boxFour {
@@ -206,11 +236,11 @@ export default {
 }
 
 .boxFour:hover a {
-  color: #0972d4;
+  color: #01050a;
 }
 
 .boxFour .look {
-  color: #696969;
+  color: white;
   font-size: 0.8em;
 }
 
@@ -230,7 +260,15 @@ a {
   padding-left: 0px;
 }
 
+.maininfo {
+  color: white;
+}
+
 .article {
+  text-align: left;
+}
+
+.videotime {
   color: white;
 }
 

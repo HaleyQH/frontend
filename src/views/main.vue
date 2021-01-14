@@ -77,13 +77,13 @@ export default {
       value: '',
       logoBackground: require('../assets/Main_img/indexBanner.jpg'),
       ruleForm: {
-        theme: [],
+        theme: '',
         query: '',
       },
       rules: {
         query: [
           {required: true, message: '不能是空的哦，输入你要查询的内容吧', trigger: 'blur'},
-          {min: 2, max: 30, message: '不能是空的哦，输入你要查询的内容吧', trigger: 'blur'}
+          {min: 0, message: '不能是空的哦，输入你要查询的内容吧', trigger: 'blur'}
         ],
       },
       result: [],
@@ -105,7 +105,7 @@ export default {
         if (valid) {
           this.$router.push({
             name: "Search",
-            params: this.ruleForm
+            params: this.ruleForm,
           })
         } else {
           console.log('error submit!!')
