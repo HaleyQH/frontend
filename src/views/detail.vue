@@ -123,6 +123,7 @@ export default {
     } else {
       params = this.$store.getters.myDetail
     }
+    console.log(params)
     this.video = params.video
     this.title = params.tittle
     this.dataset_url = params.dataset_url
@@ -132,18 +133,21 @@ export default {
     this.publisher = params.publisher
     this.publish_at = params.publish_at
     this.author = params.author
-  }, components: {
+    this.params = params.params
+  // }, mounted() {
+  //   if (window.history && window.history.pushState) {
+  //     history.pushState(null, null, document.URL);
+  //     window.addEventListener('popstate', this.back, false);
+  //   }
+  },
+  components: {
     Bottominfo
   },
   methods: {
-    async Display(params) {
-      getVideo(params)
-        .then(res => {
-          this.video = res.data
-        });
-    },
     back() {
-      this.$router.push({name: 'Search'})
+      console.log("back",this.params)
+      this.$router.push({name: 'Search',params:this.params})
+      // this.$router.push({name: 'Search'})
     }
   },
 }

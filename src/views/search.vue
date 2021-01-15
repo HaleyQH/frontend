@@ -39,9 +39,8 @@
         </el-form>
       </div>
       <div class="page">
-        <el-table :data="(tableData||'').slice((currentPage-1)*PageSize,currentPage*PageSize)" @row-click="openDetail"
+        <el-table :data="(tableData)" @row-click="openDetail"
                   size="medium"
-                  v-loading="loading"
                   style="width: 100%;border:1px solid #DEE1E7;padding-left:1px"
                   :header-cell-style="{background:'#577ABC','font-size':'14px','font-weight':'550',color:'#FFFFFF',height:'35px'}"
                   element-loading-text="$t('action.loading')"
@@ -124,36 +123,32 @@ export default {
       },
     }
   },
-  activated() {
+  mounted() {
     this.params = this.$route.params
     if (this.params.query !== undefined) {
+      this.$store.commit('saveParams', this.params)
       this.handleCurrentChange(1)
-      this.Display(this.params)
     } else {
+      this.params = this.$store.getters.myParams
       this.handleCurrentChange(this.$store.getters.myCurrentPage)
-      this.tableData = this.$store.getters.myTableData
-      this.totalCount = this.$store.getters.myTotal
     }
   },
   methods: {
-    ...mapMutations(["saveTableData"]),
-    ...mapMutations(["saveTotal"]),
     ...mapMutations(["saveCurrentPage"]),
     Display(params) {
       getData(params)
         .then(res => {
           this.tableData = res.data.data
           this.totalCount = res.data.total
-          this.saveTableData(this.tableData)
-          this.saveTotal(this.totalCount)
-          this.saveCurrentPage(this.currentPage)
         });
-    },
+    }
+    ,
     submitForm(ruleForm) {
       this.$refs[ruleForm].validate((valid) => {
         if (valid) {
-          this.params = this.ruleForm
-          this.Display(this.params)
+          this.params = JSON.parse(JSON.stringify(this.ruleForm))
+          this.$store.commit('saveParams', this.params)
+          // console.log('submit',this.params)
           this.handleCurrentChange(1)
           for (let key in this.ruleForm) {
             this.ruleForm[key] = ''
@@ -168,18 +163,20 @@ export default {
         .then(res => {
           this.result = res.data
         });
-
+      cb(this.result);
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         cb(this.result);                                     //cb()会将json对象的第一个属性拼接到下拉列表中
       }, 3000 * Math.random());
-    }, handleSelect(item) {
-      console.log(item);
     },
+    handleSelect(item) {
+      console.log(item);
+    }
+    ,
     openDetail(row) {
       if (row) {
         this.$router.push({
-          name: 'test',
+          name: 'Detail',
           params: {
             video: row.video,
             title: row.title,
@@ -189,26 +186,30 @@ export default {
             pdf: row.pdf,
             author: row.author,
             publish_at: row.publish_at,
-            publisher: row.publisher
+            publisher: row.publisher,
+            params: this.params
           }
         })
       }
-    },
+    }
+    ,
     handleCurrentChange(val) {
       // 改变默认的页数
       this.currentPage = val
       this.params.page = this.currentPage
       this.Display(this.params)
-    },
+      this.saveCurrentPage(this.currentPage)
+    }
+    ,
     back() {
       this.$router.push({name: 'Main'})
-    },
+    }
+    ,
   },
   components: {
     BottomIndex
   }
 }
-
 </script>
 
 <style scoped>
@@ -295,5 +296,4 @@ export default {
   font-family: 宋体;
   font-weight: bolder;
 }
-
 </style>
