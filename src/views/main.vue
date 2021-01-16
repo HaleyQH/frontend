@@ -55,6 +55,7 @@
 import {getData} from "@/api/api";
 import {getAjaxData} from "@/api/api";
 import BottomIndex from '../components/BottomIndex'
+
 export default {
   data() {
     return {
@@ -92,12 +93,6 @@ export default {
     };
   },
   methods: {
-    async Display(params) {
-      getData(params)
-        .then(res => {
-          this.tableData = res.data
-        });
-    },
     submitForm(ruleForm) {
       this.$refs[ruleForm].validate((valid) => {
         if (valid) {
@@ -112,25 +107,24 @@ export default {
       });
     },
     querySearchAsync(ruleForm, cb) {
-      getAjaxData(this.ruleForm)
-        .then(res => {
-          this.result = res.data
-        });
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        cb(this.result);                                     //cb()会将json对象的第一个属性拼接到下拉列表中
-      }, 3000 * Math.random());
-    }, handleSelect(item) {
+
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+          getAjaxData(this.ruleForm)3
+
+            .then(res => {
+              this.result = res.data
+            });
+          cb(this.result);                                     //cb()会将json对象的第一个属性拼接到下拉列表中
+        }, 1000);
+    },
+    handleSelect(item) {
       console.log(item);
-    }
-  }
-  ,
-  components: {
+    },
+  }, components: {
     BottomIndex
   }
-  ,
-}
-;
+};
 </script>
 
 <style scoped>
@@ -142,6 +136,7 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+
 .header-h2 {
   font-size: 40px;
   text-shadow: 0px 0px 2px #686868,
@@ -163,6 +158,7 @@ export default {
   letter-spacing: 25px;
   font-weight: bolder;
 }
+
 .header-h2:hover {
   text-shadow: 0px 0px 2px #686868,
   0px 1px 1px #fff,
@@ -181,6 +177,7 @@ export default {
   -webkit-transition: all .1s linear;
   transition: all .1s linear;
 }
+
 .bannerSelectInput {
   width: 45%;
   height: 70px;
@@ -195,9 +192,11 @@ export default {
   padding-left: 30px;
   background-color: rgba(0, 0, 0, 0.3);
 }
+
 .el-select {
   width: 195px;
 }
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -206,16 +205,20 @@ export default {
   color: #2c3e50;
   margin-top: 0px;
 }
+
 .fontWeight {
   font-weight: 800;
 }
+
 .el-row {
   margin-right: 0 !important;
 }
+
 .el-input {
   width: 390px;
 }
-.el-autocomplete{
+
+.el-autocomplete {
   width: 390px
 }
 </style>

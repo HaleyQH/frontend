@@ -65,13 +65,6 @@
           </el-table-column>
           <el-table-column header-align="center" align="center"
                            :show-overflow-tooltip="true"
-                           prop="publisher"
-                           label="出版社"
-                           width="280"
-                           >
-          </el-table-column>
-          <el-table-column header-align="center" align="center"
-                           :show-overflow-tooltip="true"
                            prop="abstract"
                            label="摘要">
           </el-table-column>
@@ -166,21 +159,21 @@ export default {
         }
       });
     }, querySearchAsync(ruleForm, cb) {
-      getAjaxData(this.ruleForm)
-        .then(res => {
-          this.result = res.data
-        });
-      cb(this.result);
       clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
+        getAjaxData(this.ruleForm)
+          .then(res => {
+            this.result = res.data
+
+          });
+
         cb(this.result);                                     //cb()会将json对象的第一个属性拼接到下拉列表中
-      }, 3000 * Math.random());
+
+      }, 1000);
     },
     handleSelect(item) {
       console.log(item);
-    }
-    ,
-    openDetail(row) {
+    }, openDetail(row) {
       if (row) {
         this.$router.push({
           name: 'Detail',
@@ -193,7 +186,6 @@ export default {
             pdf: row.pdf,
             author: row.author,
             publish_at: row.publish_at,
-            publisher: row.publisher,
             params: this.params
           }
         })
@@ -303,7 +295,8 @@ export default {
   font-family: 宋体;
   font-weight: bolder;
 }
-.el-autocomplete{
+
+.el-autocomplete {
   width: 390px
 }
 </style>

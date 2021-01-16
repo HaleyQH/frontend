@@ -46,9 +46,6 @@
                 摘要：{{ abstract }}
               </div>
               <br>
-              <div>
-                出版社：{{ publisher }}
-              </div>
               <br>
               <div>
                 出版年份：{{ publish_at }}
@@ -119,7 +116,7 @@ export default {
     }
   }, created() {
     let params = this.$route.params
-    if (params.video !== undefined) {
+    if (params.title !== undefined) {
       this.$store.commit('saveDetail', params)
     } else {
       params = this.$store.getters.myDetail
@@ -131,15 +128,9 @@ export default {
     this.abstract = params.abstract
     this.keyword_in_video_time = params.keyword_in_video_time
     this.pdf = params.pdf
-    this.publisher = params.publisher
     this.publish_at = params.publish_at
     this.author = params.author
     this.params = params.params
-  // }, mounted() {
-  //   if (window.history && window.history.pushState) {
-  //     history.pushState(null, null, document.URL);
-  //     window.addEventListener('popstate', this.back, false);
-  //   }
   },
   components: {
     Bottominfo
@@ -148,7 +139,6 @@ export default {
     back() {
       console.log("back",this.params)
       this.$router.push({name: 'Search',params:this.params})
-      // this.$router.push({name: 'Search'})
     }
   },
 }
